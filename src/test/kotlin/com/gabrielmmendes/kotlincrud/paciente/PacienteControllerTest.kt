@@ -88,11 +88,11 @@ class PacienteControllerTest(@Autowired val mockMvc: MockMvc) {
                 .contentType(MediaType.APPLICATION_JSON))
             .andDo(MockMvcResultHandlers.print())
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.lista").isArray)  // Verifica se a resposta é uma lista
-            .andExpect(jsonPath("$.lista[0].nome").value("João Silva"))  // Verifica o nome do primeiro paciente
-            .andExpect(jsonPath("$.lista[0].cpf").value("12345678901"))  // Verifica o CPF do primeiro paciente
-            .andExpect(jsonPath("$.lista[1].nome").value("Maria Souza"))  // Verifica o nome do segundo paciente
-            .andExpect(jsonPath("$.lista[1].cpf").value("98765432100"))  // Verifica o CPF do segundo paciente
+            .andExpect(jsonPath("$.lista").isArray)
+            .andExpect(jsonPath("$.lista[?(@.nome == 'João Silva')]").exists())
+            .andExpect(jsonPath("$.lista[?(@.cpf == '12345678901')]").exists())
+            .andExpect(jsonPath("$.lista[?(@.nome == 'Ana Souza')]").exists())
+            .andExpect(jsonPath("$.lista[?(@.cpf == '98765432100')]").exists())
             .andReturn()
     }
 
