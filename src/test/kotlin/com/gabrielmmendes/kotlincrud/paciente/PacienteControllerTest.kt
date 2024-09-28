@@ -162,7 +162,6 @@ class PacienteControllerTest(@Autowired val mockMvc: MockMvc) {
 
     @Test
     fun `quando deletar um paciente com id valido, deve retornar status 204`() {
-        // Supondo que o paciente com ID 1 existe
         mockMvc.perform(delete("/pacientes/{id}", 1))
             .andDo(MockMvcResultHandlers.print())
             .andExpect(status().isOk)
@@ -172,13 +171,52 @@ class PacienteControllerTest(@Autowired val mockMvc: MockMvc) {
     fun `quando deletar sem fornecer id, deve retornar status 400`() {
         mockMvc.perform(delete("/pacientes/"))
             .andDo(MockMvcResultHandlers.print())
-            .andExpect(status().isNotFound)  // Verifica se retorna 405 (Method Not Allowed)
+            .andExpect(status().isNotFound)
     }
 
     @Test
     fun `quando deletar com id invalido, deve retornar status 400`() {
         mockMvc.perform(delete("/pacientes/{id}", "abc"))
             .andDo(MockMvcResultHandlers.print())
-            .andExpect(status().isBadRequest)  // Verifica se retorna 400 (Bad Request)
+            .andExpect(status().isBadRequest)
     }
+
+    @Test
+    fun `quando deletar um paciente e tentar buscar, deve retornar status 404`() {
+        mockMvc.perform(delete("/pacientes/{id}", 2))
+            .andDo(MockMvcResultHandlers.print())
+            .andExpect(status().isOk)
+
+        mockMvc.perform(get("/pacientes/{id}", 2))
+            .andDo(MockMvcResultHandlers.print())
+            .andExpect(status().isNotFound)
+    }
+
+    @Test
+    fun `tenta listar um paciente por id, deve retornar status 200`() {
+        val paciente = Paciente(
+            id = 3,
+            nome= "Carlos Pereira",
+            cpf= "32145698700",
+            dataNascimento= Date(),
+            nomeMae= "Mariana Pereira",
+            sexo= TipoSexo.MASCULINO ,
+            telefone1= "11998765432",
+            email= "carlos.pereira@email.com",
+            cep= "87654321",
+            bairro= "Zona Sul",
+            logradouro= "Avenida Paulista",
+            numero= 201,
+            tabagista= false,
+            etilista= true,
+            lesaoSuspeita= false,
+            nivelPrioridade= NivelPrioridade.BAIXA
+        )
+        pacienteRepository.save(paciente)
+
+        mockMvc.perform(get("/pacientes/{id}", 3))
+            .andDo(MockMvcResultHandlers.print())
+            .andExpect(status().isOk)
+    }
+
 }

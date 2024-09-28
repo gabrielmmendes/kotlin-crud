@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.server.ResponseStatusException
 
 @RestController
 @RequestMapping("/pacientes")
@@ -18,6 +19,16 @@ class PacienteController(@Autowired private val repository: PacienteRepository) 
                @RequestParam(defaultValue = "10") qtdItens: Int): ResponseEntity<Pagina<Paciente>> {
         val pacientes = repository.findAll(PageRequest.of(pagina, qtdItens))
         return ResponseEntity.ok().body(Pagina(pacientes.content, pacientes.totalPages, pacientes.totalElements.toInt(), pacientes.hasNext()))
+    }
+
+    @GetMapping("/{id}")
+    fun getById(@PathVariable id: Long): ResponseEntity<Paciente> {
+        val paciente = repository.findById(id)
+        if (paciente.isPresent) {
+            return ResponseEntity.ok(paciente.get())
+        } else {
+            throw ResponseStatusException(HttpStatus.NOT_FOUND)
+        }
     }
 
     @PostMapping
