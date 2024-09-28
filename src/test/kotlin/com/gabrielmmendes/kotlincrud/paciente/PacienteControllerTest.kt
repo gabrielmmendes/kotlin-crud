@@ -83,6 +83,20 @@ class PacienteControllerTest(@Autowired val mockMvc: MockMvc) {
     }
 
     @Test
+    fun listarPacientes_whenGetRequest_thenReturnPacienteList() {
+        mockMvc.perform(get("/pacientes")
+                .contentType(MediaType.APPLICATION_JSON))
+            .andDo(MockMvcResultHandlers.print())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.lista").isArray)  // Verifica se a resposta é uma lista
+            .andExpect(jsonPath("$.lista[0].nome").value("João Silva"))  // Verifica o nome do primeiro paciente
+            .andExpect(jsonPath("$.lista[0].cpf").value("12345678901"))  // Verifica o CPF do primeiro paciente
+            .andExpect(jsonPath("$.lista[1].nome").value("Maria Souza"))  // Verifica o nome do segundo paciente
+            .andExpect(jsonPath("$.lista[1].cpf").value("98765432100"))  // Verifica o CPF do segundo paciente
+            .andReturn()
+    }
+
+    @Test
     fun cadastrarPaciente_whenPostRequest_thenReturnStatus201() {
         val paciente = Paciente(
             nome = "João Silva",
@@ -106,9 +120,9 @@ class PacienteControllerTest(@Autowired val mockMvc: MockMvc) {
         )
 
         mockMvc.perform(post("/pacientes")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(mapper.writeValueAsString(paciente))
-            .characterEncoding(Charsets.UTF_8))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(paciente))
+                .characterEncoding(Charsets.UTF_8))
             .andDo(MockMvcResultHandlers.print())
             .andExpect(status().isCreated)  // Verifica se o status é 201
             .andExpect(jsonPath("$.nome").value("João Silva"))
@@ -116,4 +130,36 @@ class PacienteControllerTest(@Autowired val mockMvc: MockMvc) {
             .andReturn()
     }
 
+    @Test
+    fun cadastrarPaciente_thenReturnSavedPaciente() {
+        val paciente = Paciente(
+          nome= "Carlos Pereira",
+          cpf= "32145698700",
+          dataNascimento= Date(),
+          nomeMae= "Mariana Pereira",
+          sexo= TipoSexo.MASCULINO ,
+          telefone1= "11998765432",
+          email= "carlos.pereira@email.com",
+          cep= "87654321",
+          bairro= "Zona Sul",
+          logradouro= "Avenida Paulista",
+          numero= 200,
+          tabagista= false,
+          etilista= true,
+          lesaoSuspeita= false,
+          nivelPrioridade= NivelPrioridade.BAIXA
+        )
+
+        mockMvc.perform(post("/pacientes")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(paciente))
+                .characterEncoding(Charsets.UTF_8))
+            .andExpect(status().isCreated)
+            .andExpect(jsonPath("$.nome").value("Carlos Pereira"))
+            .andExpect(jsonPath("$.cpf").value("32145698700"))
+            .andExpect(jsonPath("$.telefone1").value("11998765432"))
+            .andExpect(jsonPath("$.email").value("carlos.pereira@email.com"))
+            .andExpect(jsonPath("$.cep").value("87654321"))
+            .andReturn()
+    }
 }
