@@ -11,6 +11,6 @@
 ## Como rodar
 1) Clone este repositório: ```git clone https://github.com/gabrielmmendes/kotlin-crud.git```
 2) Tenha instalado o [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-3) Caminho até a pasta raiz e faça o conteiner subir: ```docker-compose up```
+3) Caminho até a pasta raiz e faça o conteiner subir: ```docker-compose up --build```
 4) Sua aplicação está no ar!!! 🔥
 5) Acesse a [documentação](http://localhost:8080/swagger-ui/index.html#/) para mais informações.
