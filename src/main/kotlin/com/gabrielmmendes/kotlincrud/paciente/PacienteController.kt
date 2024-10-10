@@ -78,6 +78,21 @@ class PacienteController(@Autowired private val repository: PacienteRepository) 
         return ResponseEntity.status(HttpStatus.CREATED).body(repository.save(paciente))
     }
 
+    @PutMapping("/{id}")
+    @Operation(
+        summary = "Atualizar um paciente",
+        description = "Atualiza as informações de um paciente pelo seu ID",
+        requestBody = io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "Dados do paciente a ser criado",
+            required = true
+        )
+    )
+    fun update(@PathVariable id: Long,
+               @RequestBody paciente: Paciente): ResponseEntity<Paciente> {
+        paciente.id = id
+        return ResponseEntity.ok().body(repository.save(paciente))
+    }
+
     @DeleteMapping("/{id}")
     @Operation(
         summary = "Exclui um paciente pelo ID",
