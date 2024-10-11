@@ -1,0 +1,17 @@
+{
+  "id": "sobrevidas-realm",
+  "realm": "sobrevidas",
+  "enabled": true,
+  "clients": [
+    {
+      "clientId": "sobrevidas-app",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "bearerOnly": true,
+      "publicClient": false,
+      "directAccessGrantsEnabled": true,
+      "redirectUris": ["http://localhost:8081/*"],
+      "secret": "${CLIENT_SECRET}"
+    }
+  ]
+}

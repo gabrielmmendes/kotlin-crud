@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   postgres:
     image: postgres:14
@@ -7,9 +6,11 @@ services:
       POSTGRES_PASSWORD: ${PG_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     ports:
-      - "5432:5432"
+      - ${PG_PORT}:${PG_PORT}
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    networks:
+      - network
 
   app:
     build:
@@ -20,13 +21,34 @@ services:
         PG_USER: ${PG_USER}
         PG_PASSWORD: ${PG_PASSWORD}
     ports:
-      - "8080:8080"
+      - ${API_PORT}:${API_PORT}
     environment:
       SPRING_DATASOURCE_URL: ${DB_URL}
       SPRING_DATASOURCE_USERNAME: ${PG_USER}
       SPRING_DATASOURCE_PASSWORD: ${PG_PASSWORD}
     depends_on:
       - postgres
+    networks:
+      - network
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    environment:
+      - KC_BOOTSTRAP_ADMIN_USERNAME=admin
+      - KC_BOOTSTRAP_ADMIN_PASSWORD=admin
+      - KEYCLOAK_IMPORT=/opt/keycloak/data/import/realm-import.json
+    ports:
+      - ${KC_PORT}:${KC_PORT}
+    entrypoint: ["/opt/keycloak/bin/kc.sh", "start-dev", "--import-realm"]
+    depends_on:
+      - postgres
+    networks:
+      - network
+    volumes:
+      - ./keycloak/realm-import.json:/opt/keycloak/data/import/realm-import.json
 
 volumes:
   postgres-data:
+
+networks:
+  network:
