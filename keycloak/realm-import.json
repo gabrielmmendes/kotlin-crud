@@ -13,5 +13,21 @@
       "redirectUris": ["http://localhost:8081/*"],
       "secret": "${CLIENT_SECRET}"
     }
+  ],
+  "users": [
+    {
+      "username": "usuario",
+      "enabled": true,
+      "emailVerified": true,
+      "email": "usuario@example.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["user"]
+    }
   ]
 }
